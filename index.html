@@ -178,13 +178,136 @@
             border-bottom: none;
         }
         
+        /* 移动端响应式优化 */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+                margin-top: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+            }
+            
             .controls {
                 flex-direction: column;
+                gap: 12px;
             }
             
             .buttons {
                 justify-content: center;
+                width: 100%;
+            }
+            
+            button {
+                width: 48%;
+                min-height: 50px;
+                padding: 12px 10px;
+                font-size: 1em;
+                min-width: unset;
+            }
+            
+            .question-container {
+                padding: 20px 15px 20px 20px;
+                min-height: 120px;
+            }
+            
+            .question-text {
+                font-size: 1.2em;
+                padding-top: 15px;
+            }
+            
+            .chapter-badge {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .history-item {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .history-item span:last-child {
+                color: #7f8c8d;
+                font-size: 0.9em;
+            }
+        }
+        
+        /* 超小屏幕优化 */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                padding: 15px;
+                border-radius: 8px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .subtitle {
+                font-size: 0.9em;
+            }
+            
+            select {
+                padding: 12px 10px;
+                font-size: 1em;
+            }
+            
+            .buttons {
+                gap: 8px;
+            }
+            
+            button {
+                padding: 12px 8px;
+                min-height: 45px;
+                border-radius: 5px;
+                font-size: 0.95em;
+            }
+            
+            .question-container {
+                padding: 35px 15px 15px 15px;
+                margin-bottom: 15px;
+            }
+            
+            .question-text {
+                font-size: 1.1em;
+                line-height: 1.4;
+            }
+            
+            .chapter-badge {
+                top: 10px;
+                left: 15px;
+                right: auto;
+                font-size: 0.85em;
+            }
+            
+            .counter {
+                font-size: 0.95em;
+            }
+            
+            .history h3 {
+                font-size: 1.1em;
+            }
+            
+            .history-list {
+                height: 120px;
+                padding: 8px;
+            }
+            
+            .history-item {
+                padding: 8px;
             }
         }
     </style>
