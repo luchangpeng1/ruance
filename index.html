@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>软件测试复习题目随机生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f7f9fc;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+        
+        .chapter-filter {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .primary-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .secondary-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .question-container {
+            background-color: #f8f9fa;
+            border-left: 5px solid #3498db;
+            padding: 25px;
+            border-radius: 5px;
+            min-height: 150px;
+            margin-bottom: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .question-container.changed {
+            animation: fadeInQuestion 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeInQuestion {
+            0% { opacity: 0.5; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question-text {
+            font-size: 1.4em;
+            line-height: 1.5;
+            color: #2c3e50;
+        }
+        
+        .chapter-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .counter {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #7f8c8d;
+        }
+        
+        .history {
+            margin-top: 30px;
+        }
+        
+        .history h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .history-list {
+            list-style-type: none;
+            padding: 0;
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>软件测试复习题目随机生成器</h1>
+            <p class="subtitle">帮助你随机复习软件测试知识点</p>
+        </header>
+        
+        <div class="controls">
+            <div class="chapter-filter">
+                <select id="chapter-select">
+                    <option value="all">所有章节</option>
+                    <option value="1">第一章</option>
+                    <option value="2">第二章</option>
+                    <option value="3">第三章</option>
+                    <option value="4">第四章</option>
+                    <option value="5">第五章</option>
+                    <option value="6">第六章</option>
+                </select>
+            </div>
+            
+            <div class="buttons">
+                <button id="random-btn" class="primary-btn">随机生成题目</button>
+                <button id="reset-btn" class="secondary-btn">重置历史记录</button>
+            </div>
+        </div>
+        
+        <div class="question-container">
+            <div class="chapter-badge" id="chapter-badge">第一章</div>
+            <p class="question-text" id="question-text">点击"随机生成题目"按钮开始复习</p>
+        </div>
+        
+        <div class="counter" id="counter">
+            已复习: 0 / 总题目数: 0
+        </div>
+        
+        <div class="history">
+            <h3>已复习题目历史记录:</h3>
+            <ul class="history-list" id="history-list">
+                <li class="history-item">暂无记录</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // 解析题目数据
+        const questionData = {
+            1: [ // 第一章
+                "什么叫软件测试",
+                "软件缺陷",
+                "软件缺陷产生原因",
+                "软件测试目的",
+                "软件测试原则",
+                "软件生命周期四个阶段",
+                "软件测试分类",
+                "什么是测试用例，概念",
+                "软件测试用例的编辑依据"
+            ],
+            2: [ // 第二章
+                "白盒测试概念",
+                "白盒测试的动态和静态测试",
+                "白盒测试基本原则（四条）",
+                "静态测试常用测试方法",
+                "动态测试的手段，程序插桩",
+                "逻辑覆盖测试，动态测试里面非常重要的内容",
+                "逻辑覆盖的种类",
+                "每一种逻辑覆盖的定义",
+                "循环结构测试"
+            ],
+            3: [ // 第三章
+                "黑盒测试概念",
+                "黑盒测试的优点",
+                "黑盒测试的方法，等价类划分法",
+                "等价类划分法六种规则",
+                "边界值分析法，边界值分析基本原则",
+                "两类边界值选取方法",
+                "判定表",
+                "因果图",
+                "正交表",
+                "场景法，场景的基本流和备选流划分",
+                "黑盒白盒测试方法优缺点对比"
+            ],
+            4: [ // 第四章
+                "单元，集成，系统，验收，四种概念",
+                "单元测试的测试依据",
+                "单元测试的概念",
+                "单元测试通过标准",
+                "单元测试的任务，五个方面",
+                "集成测试概念",
+                "集成测试的主要任务",
+                "集成测试的策略",
+                "系统测试概念",
+                "验收测试概念",
+                "验收测试主要内容",
+                "回归测试概念"
+            ],
+            5: [ // 第五章
+                "功能测试和非功能测试概念",
+                "功能测试主要内容",
+                "非功能和功能的主要区别，四点",
+                "性能测试的分类",
+                "性能测试目的（四个）"
+            ],
+            6: [ // 第六章
+                "软件缺陷的主要属性",
+                "软件缺陷的详细信息",
+                "软件缺陷的生命周期",
+                "软件缺陷再现（采取的措施）",
+                "软件测试的评估的方法"
+            ]
+        };
+        
+        // 所有题目的总列表（用于随机抽取所有题目）
+        let allQuestions = [];
+        for (let chapter in questionData) {
+            questionData[chapter].forEach(q => {
+                allQuestions.push({
+                    chapter: parseInt(chapter),
+                    text: q
+                });
+            });
+        }
+        
+        // 初始化变量
+        let history = []; // 历史记录
+        let currentQuestion = null;
+        const chapterSelect = document.getElementById('chapter-select');
+        const randomBtn = document.getElementById('random-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const questionText = document.getElementById('question-text');
+        const chapterBadge = document.getElementById('chapter-badge');
+        const counter = document.getElementById('counter');
+        const historyList = document.getElementById('history-list');
+        
+        // 更新计数器
+        function updateCounter() {
+            let total = 0;
+            const selectedChapter = chapterSelect.value;
+            
+            if (selectedChapter === 'all') {
+                total = allQuestions.length;
+            } else {
+                total = questionData[selectedChapter].length;
+            }
+            
+            counter.textContent = `已复习: ${Math.min(history.length, total)} / 总题目数: ${total}`;
+        }
+        
+        // 更新历史记录显示
+        function updateHistory() {
+            if (history.length === 0) {
+                historyList.innerHTML = '<li class="history-item">暂无记录</li>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            
+            // 显示最近的10条记录
+            const recentHistory = history.slice(-10).reverse();
+            
+            recentHistory.forEach((item, index) => {
+                const historyItem = document.createElement('li');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <span>${item.text}</span>
+                    <span>第${item.chapter}章</span>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // 获取可用题目（排除已经在历史记录中的题目）
+        function getAvailableQuestions() {
+            const selectedChapter = chapterSelect.value;
+            let availableQuestions = [];
+            
+            if (selectedChapter === 'all') {
+                availableQuestions = allQuestions.filter(q => {
+                    return !history.some(h => h.text === q.text && h.chapter === q.chapter);
+                });
+            } else {
+                const chapterQuestions = questionData[selectedChapter];
+                availableQuestions = chapterQuestions
+                    .filter(q => {
+                        return !history.some(h => h.text === q && h.chapter === parseInt(selectedChapter));
+                    })
+                    .map(q => ({
+                        chapter: parseInt(selectedChapter),
+                        text: q
+                    }));
+            }
+            
+            return availableQuestions;
+        }
+        
+        // 生成随机题目
+        function generateRandomQuestion() {
+            const questionContainer = document.querySelector('.question-container');
+            
+            // 移除动画类，以便下次可以再次添加
+            questionContainer.classList.remove('changed');
+            
+            // 触发浏览器重绘
+            void questionContainer.offsetWidth;
+            
+            let availableQuestions = getAvailableQuestions();
+            
+            // 如果所有题目都已经复习过
+            if (availableQuestions.length === 0) {
+                const selectedChapter = chapterSelect.value;
+                
+                if (selectedChapter === 'all') {
+                    availableQuestions = allQuestions;
+                } else {
+                    availableQuestions = questionData[selectedChapter].map(q => ({
+                        chapter: parseInt(selectedChapter),
+                        text: q
+                    }));
+                }
+                
+                // 如果用户选择继续，清空历史记录
+                if (confirm('所有题目都已复习过一遍！是否重置历史记录继续复习？')) {
+                    history = [];
+                    updateHistory();
+                }
+            }
+            
+            if (availableQuestions.length > 0) {
+                // 随机选择一个题目
+                const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+                currentQuestion = availableQuestions[randomIndex];
+                
+                // 更新显示
+                questionText.textContent = currentQuestion.text;
+                chapterBadge.textContent = `第${currentQuestion.chapter}章`;
+                
+                // 添加到历史记录
+                history.push(currentQuestion);
+                
+                // 添加动画
+                questionContainer.classList.add('changed');
+                
+                // 更新历史记录和计数器
+                updateHistory();
+                updateCounter();
+            }
+        }
+        
+        // 事件监听
+        randomBtn.addEventListener('click', generateRandomQuestion);
+        
+        resetBtn.addEventListener('click', () => {
+            if (confirm('确定要重置历史记录吗？')) {
+                history = [];
+                updateHistory();
+                updateCounter();
+                
+                questionText.textContent = '点击"随机生成题目"按钮开始复习';
+                chapterBadge.textContent = '选择章节';
+            }
+        });
+        
+        chapterSelect.addEventListener('change', () => {
+            updateCounter();
+        });
+        
+        // 初始化
+        updateCounter();
+        updateHistory();
+    </script>
+</body>
+</html>
